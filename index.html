@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Web Page</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="script.js" defer></script>
+    <!-- Leaflet CSS für Web-GIS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+</head>
+<body>
+    <header>
+        <h1 style="text-align: center;">Place to be 2025</h1>
+    </header>
+    <main>
+    <section>
+        <h2 style="text-align: center; margin-bottom: 30px;">StadtRanking</h2>
+        <table style="margin: 0 auto 40px auto; font-size: 1.2em; border-collapse: collapse; min-width: 300px;">
+            <thead>
+                <tr>
+                    <th style="border-bottom: 2px solid #ccc; padding: 8px 16px;">Platz</th>
+                    <th style="border-bottom: 2px solid #ccc; padding: 8px 16px;">Stadt</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="padding: 8px 16px; text-align: center;">1</td>
+                    <td style="padding: 8px 16px;">Mainz</td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px 16px; text-align: center;">2</td>
+                    <td style="padding: 8px 16px;">Saarbrücken</td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px 16px; text-align: center;">3</td>
+                    <td style="padding: 8px 16px;">Berlin</td>
+                </tr>
+            </tbody>
+        </table>
+        <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+            <div style="flex: 1 1 0; min-width: 300px;">
+                <h2>Web-GIS: Mainz</h2>
+                <div id="map" style="height: 400px; width: 100%; margin-bottom: 30px;"></div>
+            </div>
+            <div style="flex: 1 1 0; min-width: 300px;">
+                <h2>Web-GIS: Saarbrücken</h2>
+                <div id="map-sb" style="height: 400px; width: 100%; margin-bottom: 30px;"></div>
+            </div>
+            <div style="flex: 1 1 0; min-width: 300px;">
+                <h2>Web-GIS: Berlin</h2>
+                <div id="map-berlin" style="height: 400px; width: 100%;"></div>
+            </div>
+        </div>
+        <div style="max-width: 700px; margin: 40px auto 0 auto; font-size: 1.15em;">
+            <h3 style="text-align: center; margin-bottom: 15px;">Faktoren für das Stadtranking</h3>
+            <ol>
+                <li><strong>Schobbe und Bier</strong></li>
+                <li><strong>Nähe zum Saarland</strong></li>
+                <li><strong>Bundesligisten</strong></li>
+            </ol>
+        </div>
+    </section>
+</main>
+    <footer>
+        <p>&copy; 2024 My Web Page</p>
+    </footer>
+    <!-- Leaflet JS für Web-GIS -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        // Mainz
+        var map = L.map('map').setView([50.000, 8.271], 13);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+        L.marker([50.000, 8.271]).addTo(map)
+            .bindPopup('Mainz Zentrum')
+            .openPopup();
+
+        // Saarbrücken
+        var mapSb = L.map('map-sb').setView([49.240, 6.996], 13);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(mapSb);
+        L.marker([49.240, 6.996]).addTo(mapSb)
+            .bindPopup('Saarbrücken Zentrum')
+            .openPopup();
+
+        // Berlin
+        var mapBerlin = L.map('map-berlin').setView([52.520, 13.405], 13);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(mapBerlin);
+        L.marker([52.520, 13.405]).addTo(mapBerlin)
+            .bindPopup('Berlin Zentrum')
+            .openPopup();
+    </script>
+</body>
+</html>
