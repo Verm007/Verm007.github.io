@@ -1,101 +1,257 @@
 <!DOCTYPE html>
-
-<html lang="en">
-
+<html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Web Page</title>
-    <link rel="stylesheet" href="styles.css">
-    <script src="script.js" defer></script>
-    <!-- Leaflet CSS für Web-GIS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Place to be 2025</title>
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+  <style>
+    :root {
+      --bg-color: #f9f9f9;
+      --text-color: #222;
+      --card-bg: #fff;
+      --accent: #0077ff;
+    }
+
+    body.dark {
+      --bg-color: #121212;
+      --text-color: #eee;
+      --card-bg: #1e1e1e;
+      --accent: #66b2ff;
+    }
+
+    body {
+      font-family: "Inter", sans-serif;
+      background: var(--bg-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 0;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    header {
+      text-align: center;
+      padding: 20px;
+      background: var(--card-bg);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 2em;
+    }
+
+    .theme-toggle {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.5em;
+      color: var(--text-color);
+      transition: transform 0.3s;
+    }
+
+    .theme-toggle:hover {
+      transform: scale(1.1);
+    }
+
+    main {
+      padding: 20px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      padding: 10px 20px;
+      border: none;
+      background: var(--card-bg);
+      color: var(--text-color);
+      cursor: pointer;
+      border-radius: 8px;
+      transition: all 0.3s;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .tab-btn.active {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .tab-btn:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    /* Kartencontainer */
+    .map-container {
+      position: relative;
+      overflow: hidden;
+      border-radius: 12px;
+      background: var(--card-bg);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      height: 400px;
+      transition: opacity 0.5s ease-in-out;
+    }
+
+    .map-container.hidden {
+      opacity: 0;
+      pointer-events: none;
+      height: 0;
+    }
+
+    /* Tabelle */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--card-bg);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 30px;
+    }
+
+    th, td {
+      padding: 10px;
+      text-align: center;
+      border-bottom: 1px solid #ddd;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Ranking-Faktoren */
+    .factors {
+      background: var(--card-bg);
+      border-radius: 10px;
+      padding: 20px;
+      margin-top: 30px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    footer {
+      text-align: center;
+      padding: 15px;
+      background: var(--card-bg);
+      margin-top: 40px;
+      font-size: 0.9em;
+    }
+
+    @media (max-width: 600px) {
+      h1 { font-size: 1.6em; }
+      .map-container { height: 300px; }
+    }
+  </style>
 </head>
+
 <body>
-    <header>
-        <h1 style="text-align: center;">Place to be 2025</h1>
-    </header>
-    <main>
-    <section>
-        <h2 style="text-align: center; margin-bottom: 30px;">StadtRanking</h2>
-        <table style="margin: 0 auto 40px auto; font-size: 1.2em; border-collapse: collapse; min-width: 300px;">
-            <thead>
-                <tr>
-                    <th style="border-bottom: 2px solid #ccc; padding: 8px 16px;">Platz</th>
-                    <th style="border-bottom: 2px solid #ccc; padding: 8px 16px;">Stadt</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td style="padding: 8px 16px; text-align: center;">1</td>
-                    <td style="padding: 8px 16px;">Mainz</td>
-                </tr>
-                <tr>
-                    <td style="padding: 8px 16px; text-align: center;">2</td>
-                    <td style="padding: 8px 16px;">Saarbrücken</td>
-                </tr>
-                <tr>
-                    <td style="padding: 8px 16px; text-align: center;">3</td>
-                    <td style="padding: 8px 16px;">Berlin</td>
-                </tr>
-            </tbody>
-        </table>
-        <div style="display: flex; gap: 20px; flex-wrap: wrap;">
-            <div style="flex: 1 1 0; min-width: 300px;">
-                <h2>Web-GIS: Mainz</h2>
-                <div id="map" style="height: 400px; width: 100%; margin-bottom: 30px;"></div>
-            </div>
-            <div style="flex: 1 1 0; min-width: 300px;">
-                <h2>Web-GIS: Saarbrücken</h2>
-                <div id="map-sb" style="height: 400px; width: 100%; margin-bottom: 30px;"></div>
-            </div>
-            <div style="flex: 1 1 0; min-width: 300px;">
-                <h2>Web-GIS: Berlin</h2>
-                <div id="map-berlin" style="height: 400px; width: 100%;"></div>
-            </div>
-        </div>
-        <div style="max-width: 700px; margin: 40px auto 0 auto; font-size: 1.15em;">
-            <h3 style="text-align: center; margin-bottom: 15px;">Faktoren für das Stadtranking</h3>
-            <ol>
-                <li><strong>Schobbe und Bier</strong></li>
-                <li><strong>Nähe zum Saarland</strong></li>
-                <li><strong>Bundesligisten</strong></li>
-            </ol>
-        </div>
-    </section>
-</main>
-    <footer>
-        <p>&copy; 2024 My Web Page</p>
-    </footer>
-    <!-- Leaflet JS für Web-GIS -->
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <script>
-        // Mainz
-        var map = L.map('map').setView([50.000, 8.271], 13);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; OpenStreetMap contributors'
-        }).addTo(map);
-        L.marker([50.000, 8.271]).addTo(map)
-            .bindPopup('Mainz Zentrum')
-            .openPopup();
+  <header>
+    <h1>Place to be 2025</h1>
+    <button id="themeToggle" class="theme-toggle" title="Toggle Theme">🌙</button>
+  </header>
 
-        // Saarbrücken
-        var mapSb = L.map('map-sb').setView([49.240, 6.996], 13);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; OpenStreetMap contributors'
-        }).addTo(mapSb);
-        L.marker([49.240, 6.996]).addTo(mapSb)
-            .bindPopup('Saarbrücken Zentrum')
-            .openPopup();
+  <main>
+    <h2 style="text-align:center;">StadtRanking</h2>
 
-        // Berlin
-        var mapBerlin = L.map('map-berlin').setView([52.520, 13.405], 13);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; OpenStreetMap contributors'
-        }).addTo(mapBerlin);
-        L.marker([52.520, 13.405]).addTo(mapBerlin)
-            .bindPopup('Berlin Zentrum')
-            .openPopup();
-    </script>
+    <table>
+      <thead>
+        <tr><th>Platz</th><th>Stadt</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>Mainz</td></tr>
+        <tr><td>2</td><td>Saarbrücken</td></tr>
+        <tr><td>3</td><td>Berlin</td></tr>
+      </tbody>
+    </table>
+
+    <div class="tabs">
+      <button class="tab-btn active" data-target="map-mainz">Mainz</button>
+      <button class="tab-btn" data-target="map-sb">Saarbrücken</button>
+      <button class="tab-btn" data-target="map-berlin">Berlin</button>
+    </div>
+
+    <div id="map-mainz" class="map-container"></div>
+    <div id="map-sb" class="map-container hidden"></div>
+    <div id="map-berlin" class="map-container hidden"></div>
+
+    <div class="factors">
+      <h3>Faktoren für das Stadtranking</h3>
+      <ol>
+        <li><strong>Schobbe und Bier</strong></li>
+        <li><strong>Nähe zum Saarland</strong></li>
+        <li><strong>Bundesligisten</strong></li>
+      </ol>
+    </div>
+  </main>
+
+  <footer>
+    &copy; 2025 Place to be
+  </footer>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+  <script>
+    // Karten erstellen
+    const maps = {
+      mainz: L.map('map-mainz').setView([50.000, 8.271], 13),
+      sb: L.map('map-sb').setView([49.240, 6.996], 13),
+      berlin: L.map('map-berlin').setView([52.520, 13.405], 13)
+    };
+
+    Object.values(maps).forEach(map => {
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
+    });
+
+    L.marker([50.000, 8.271]).addTo(maps.mainz).bindPopup("Mainz Zentrum");
+    L.marker([49.240, 6.996]).addTo(maps.sb).bindPopup("Saarbrücken Zentrum");
+    L.marker([52.520, 13.405]).addTo(maps.berlin).bindPopup("Berlin Zentrum");
+
+    // Tabs steuern
+    const tabs = document.querySelectorAll('.tab-btn');
+    const containers = document.querySelectorAll('.map-container');
+
+    tabs.forEach(btn => {
+      btn.addEventListener('click', () => {
+        tabs.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        containers.forEach(c => c.classList.add('hidden'));
+        document.getElementById(btn.dataset.target).classList.remove('hidden');
+        // Karten-Resize (wichtig bei Leaflet in Tabs)
+        setTimeout(() => {
+          maps.mainz.invalidateSize();
+          maps.sb.invalidateSize();
+          maps.berlin.invalidateSize();
+        }, 300);
+      });
+    });
+
+    // Theme Toggle
+    const themeBtn = document.getElementById("themeToggle");
+    themeBtn.addEventListener("click", () => {
+      document.body.classList.toggle("dark");
+      themeBtn.textContent = document.body.classList.contains("dark") ? "☀️" : "🌙";
+    });
+  </script>
 </body>
 </html>
+
+
